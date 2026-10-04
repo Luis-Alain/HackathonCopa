@@ -44,7 +44,7 @@ El rol de Observabilidad es el que más puntos decide!
 
 ## Guías por tema
 
-El calendario de abajo dice **cuándo**; las guías dicen **qué hacer**, paso a paso, con pistas y criterios de "listo cuando". Cada uno construye su propio lab en `lab/` siguiendo las guías.
+El calendario de abajo dice **cuándo**; las guías dicen **qué hacer**, paso a paso, con pistas y criterios de "listo cuando".
 
 | Guía                                                                     | Tema                                         | Experto            | Cuándo           |
 | ------------------------------------------------------------------------ | -------------------------------------------- | ------------------ | ---------------- |
@@ -67,7 +67,6 @@ Sin esto no se practica nada. Cada miembro del equipo lo completa en su laptop. 
 
 - [x] Azure for Students activado (crédito gratis con correo universitario, sin tarjeta)
 - [x] Organización en Azure DevOps (dev.azure.com) con un proyecto de práctica
-- [ ] Solicitud de paralelismo gratis de Azure DevOps enviada
 - [x] Dynatrace Playground + Dynatrace University (seguir la Guía del Estudiante)
 - [ ] Grupo de chat del equipo + repo compartido en GitHub para chuletas y lab
 
@@ -75,8 +74,8 @@ Sin esto no se practica nada. Cada miembro del equipo lo completa en su laptop. 
 
 - [x] VS Code + extensiones: Azure Tools, HashiCorp Terraform, C# Dev Kit
 - [x] .NET SDK 10 (`dotnet --list-sdks`); confirmar que App Service ofrece `DOTNETCORE:10.0` en la región
-- [ ] Azure CLI (`az login` funcionando)
-- [ ] Terraform (`terraform -version`)
+- [x] Azure CLI (`az login` funcionando)
+- [x] Terraform (`terraform -version`)
 - [x] Git + Docker Desktop
 - [x] Node.js (para el frontend)
 
