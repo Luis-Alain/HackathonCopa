@@ -78,8 +78,7 @@ Azure for Students tiene **restricciones**: no todas las regiones están permiti
 Las organizaciones nuevas de Azure DevOps **no tienen agentes hospedados gratis** hasta que Microsoft aprueba una solicitud, y eso tarda de 2 a 3 días hábiles.
 
 - [ ] Crear la organización en dev.azure.com y un proyecto de práctica
-- [ ] Solicitar paralelismo gratis en el formulario oficial (busca "Azure DevOps parallelism request")
-- [ ] Plan B si no llega a tiempo: aprender a registrar un **agente autohospedado** en tu laptop (ver [03-azure-devops-pipelines.md](03-azure-devops-pipelines.md))
+- [ ] Plan B: aprender a registrar un **agente autohospedado** en tu laptop (ver [03-azure-devops-pipelines.md](03-azure-devops-pipelines.md))
 
 ## 7. Dynatrace
 

@@ -71,3 +71,8 @@ publish/
 !*.tfvars.example
 tfplan
 crash.log
+
+# SQLite local database
+*.db
+*.db-shm
+*.db-wal
