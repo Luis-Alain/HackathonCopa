@@ -62,3 +62,12 @@ yarn-error.log*
 # Build artifacts
 dist/
 publish/
+
+# Terraform (el .terraform.lock.hcl sí se sube)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+tfplan
+crash.log
