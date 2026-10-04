@@ -38,8 +38,15 @@ public static class ContactEndpoints
         return contact is null ? TypedResults.NotFound() : TypedResults.Ok(contact);
     }
 
-    private static async Task<Results<NoContent, NotFound>> DeleteContact(int id, ContactService service)
+    private static async Task<Results<NoContent, NotFound, ProblemHttpResult>> DeleteContact(int id, ContactService service)
     {
-        return await service.DeleteAsync(id) ? TypedResults.NoContent() : TypedResults.NotFound();
+        return await service.DeleteAsync(id) switch
+        {
+            DeleteContactResult.Deleted => TypedResults.NoContent(),
+            DeleteContactResult.HasMessages => TypedResults.Problem(
+                detail: $"Contact {id} has messages and can't be deleted.",
+                statusCode: StatusCodes.Status409Conflict),
+            _ => TypedResults.NotFound()
+        };
     }
 }

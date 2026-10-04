@@ -14,3 +14,10 @@ public record ContactResponse(int Id, string Name, string Phone, DateTime Create
     public static ContactResponse FromEntity(Contact contact) =>
         new(contact.Id, contact.Name, contact.Phone, contact.CreatedAt);
 }
+
+public enum DeleteContactResult
+{
+    Deleted,
+    NotFound,
+    HasMessages
+}
