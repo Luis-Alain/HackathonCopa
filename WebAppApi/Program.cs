@@ -7,7 +7,7 @@ using WebAppApi.HealthCheck;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 builder.Services.AddValidation();
 
@@ -21,6 +21,14 @@ builder.Services.AddScoped<ContactService>();
 builder.Services.AddScoped<MessageService>();
 
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // This will create the database if it doesn't exist and apply all pending migrations
+    await dbContext.Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
