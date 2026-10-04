@@ -6,7 +6,7 @@ Objetivo: ganar el reto del Oct 9, 2026 en la sede Santiago resolviendo más pro
 
 ## Lo que sabemos del reto
 
-El stack es Azure + Dynatrace. Quedan 5 días de preparación (sábado 3 a miércoles 7).
+El stack es Azure + Dynatrace.
 
 | Dato               | Detalle                                                                                                         |
 | ------------------ | --------------------------------------------------------------------------------------------------------------- |

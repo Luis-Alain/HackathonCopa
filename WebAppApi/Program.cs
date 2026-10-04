@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebAppApi.data;
 using WebAppApi.features.Contacts;
+using WebAppApi.features.Messages;
 using WebAppApi.HealthCheck;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<MessageService>();
 
 var app = builder.Build();
 
@@ -31,5 +33,7 @@ app.MapHealthChecks("/healthz");
 app.UseHttpsRedirection();
 
 app.MapContactEndpoints();
+
+app.MapMessagesEndpoints();
 
 app.Run();

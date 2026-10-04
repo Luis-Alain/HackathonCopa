@@ -59,10 +59,16 @@ public class ContactService
         return ContactResponse.FromEntity(contact);
     }
 
-    // Returns false when the contact does not exist.
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<DeleteContactResult> DeleteAsync(int id)
     {
+        // Messages restrict the delete, so check first instead of failing on the foreign key.
+        var hasMessages = await _db.Messages.AnyAsync(m => m.SenderId == id || m.RecipientId == id);
+        if (hasMessages)
+        {
+            return DeleteContactResult.HasMessages;
+        }
+
         var deleted = await _db.Contacts.Where(c => c.Id == id).ExecuteDeleteAsync();
-        return deleted > 0;
+        return deleted > 0 ? DeleteContactResult.Deleted : DeleteContactResult.NotFound;
     }
 }
