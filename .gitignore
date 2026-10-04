@@ -1,0 +1,64 @@
+# Build results
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Visual Studio
+.vs/
+.vscode/
+*.sln.iml
+*.user
+*.suo
+*.cache
+*.VisualState.xml
+
+# ReSharper
+.idea/
+*.DotSettings.user
+_ReSharper*/
+*.resharper
+
+# Local environment files
+.env
+.env.local
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/extensions.json
+
+# Logs
+logs/
+*.log
+
+# Node (if using npm/node tools)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Build artifacts
+dist/
+publish/
