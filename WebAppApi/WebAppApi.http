@@ -1,6 +1,15 @@
+# General requests. Feature requests live next to their code:
+#   features/contacts/contacts.http
+#   features/messages/messages.http
+#
+# Run with VS Code (REST Client extension) or Visual Studio 2022 17.12+.
+# Start the API first: dotnet run --launch-profile http
+
 @WebAppApi_HostAddress = http://localhost:5033
 
-POST {{WebAppApi_HostAddress}}/api/contacts
-Accept: application/json
+### Health check: 200 "Healthy"
+GET {{WebAppApi_HostAddress}}/healthz
 
-GET {{WebAppApi_HostAddress}}/api/contacts
+### OpenAPI document (Development only)
+GET {{WebAppApi_HostAddress}}/openapi/v1.json
+Accept: application/json

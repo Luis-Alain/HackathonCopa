@@ -50,12 +50,22 @@ El calendario de abajo dice **cuándo**; las guías dicen **qué hacer**, paso a
 | ------------------------------------------------------------------------ | -------------------------------------------- | ------------------ | ---------------- |
 | [00 · Setup](guias/00-setup.md)                                          | Herramientas, cuentas, límites de la suscripción | Todos          | Sábado, primero  |
 | [01 · Azure y App Service](guias/01-azure-app-service.md)                | Desplegar API + frontend, CORS, diagnóstico  | Azure              | Sábado           |
-| [02 · Terraform](guias/02-terraform.md)                                  | Lab completo como código, drift, errores     | IaC / Pipelines    | Domingo          |
+| [02 · Terraform](guias/02-terraform.md)                                  | Infraestructura completa como código, drift, errores | IaC / Pipelines | Domingo |
 | [03 · Git y Azure DevOps](guias/03-azure-devops-pipelines.md)            | Pipeline build + deploy, pipelines rotos     | IaC / Pipelines    | Domingo          |
 | [04 · App Insights y KQL](guias/04-observabilidad-app-insights-kql.md)   | Telemetría, consultas, síntoma vs causa      | Observabilidad     | Lunes            |
 | [05 · Dynatrace](guias/05-dynatrace.md)                                  | Essentials, Problems, trazas, DQL            | Observabilidad     | Martes           |
 | [06 · Troubleshooting](guias/06-troubleshooting.md)                      | Romper y arreglar en parejas, cronometrado   | Todos              | Lunes y martes   |
 | [07 · Simulacro](guias/07-simulacro.md)                                  | Ensayo de competencia + logística            | Todos              | Miércoles        |
+
+## Estructura del repo
+
+| Carpeta | Contenido |
+|---|---|
+| `WebAppApi/` | API .NET 10 de práctica: contactos, mensajes entre contactos, health check en `/healthz`. EF Core con SQLite. Archivos `.http` para probar en local |
+| `docs/` | Documentación de la API y colección de Postman (`docs/postman/`) |
+| `infra/` | Terraform de la infraestructura |
+| `frontend/` | Frontend HTML + JS que consume la API (se crea en la guía 01, Ejercicio 4) |
+| `guias/` | Guías paso a paso por tema |
 
 ## Setup previo (hoy, 1 h)
 
@@ -68,7 +78,7 @@ Sin esto no se practica nada. Cada miembro del equipo lo completa en su laptop. 
 - [x] Azure for Students activado (crédito gratis con correo universitario, sin tarjeta)
 - [x] Organización en Azure DevOps (dev.azure.com) con un proyecto de práctica
 - [x] Dynatrace Playground + Dynatrace University (seguir la Guía del Estudiante)
-- [ ] Grupo de chat del equipo + repo compartido en GitHub para chuletas y lab
+- [ ] Grupo de chat del equipo + este repo compartido en GitHub (chuletas, `WebAppApi`, `infra`)
 
 **Herramientas instaladas**
 
@@ -104,9 +114,9 @@ Meta del día: desplegar una API .NET y un frontend en App Service y saber dónd
 
 **Practicar**
 
-- [ ] Crear una minimal API .NET (`dotnet new webapi`) con `/health` y un endpoint que lea una variable de entorno
+- [ ] Correr `WebAppApi` en local con sus archivos `.http`, y agregarle `/api/info`, que lea la variable `MENSAJE_BIENVENIDA`
 - [ ] Desplegarla desde el portal y luego con `az webapp up`
-- [ ] Crear un frontend estático que llame a la API y desplegarlo (Static Web App o segunda Web App)
+- [ ] Crear el frontend en `frontend/` que liste los contactos de la API, y desplegarlo (Static Web App o segunda Web App)
 - [ ] Provocar y resolver un error de CORS entre ambos
 - [ ] Cambiar un App Setting y ver el efecto en vivo
 - [ ] Ver logs en Log stream y entrar a Kudu
@@ -115,7 +125,7 @@ Meta del día: desplegar una API .NET y un frontend en App Service y saber dónd
 
 ## Domingo 4 — Terraform + Azure DevOps (5–6 h)
 
-Meta del día: levantar toda la infraestructura del lab con Terraform y desplegar la API con un pipeline.
+Meta del día: levantar toda la infraestructura con Terraform (`infra/`) y desplegar `WebAppApi` con un pipeline.
 
 **Guías:** [02 · Terraform](guias/02-terraform.md) y [03 · Git y Azure DevOps](guias/03-azure-devops-pipelines.md)
 
@@ -144,7 +154,7 @@ Meta del día: levantar toda la infraestructura del lab con Terraform y desplega
 - [ ] Crear un pipeline en Azure DevOps: build → publish → deploy a la Web App
 - [ ] Hacer fallar el pipeline (ruta de proyecto mal) y diagnosticar en los logs del job
 
-**Listo cuando:** el lab completo se crea con un solo `terraform apply` y un push dispara el despliegue.
+**Listo cuando:** la infraestructura completa se crea con un solo `terraform apply` y un push a `WebAppApi/` dispara el despliegue.
 
 ## Lunes 5 — Observabilidad en Azure (6 h, el día más importante)
 
@@ -218,7 +228,7 @@ Meta del día: ensayar la competencia como equipo y llegar descansados. Nada nue
 
 **Simulacro (90 min, cronometrado)**
 
-- [ ] Una persona prepara 5 fallos distintos en el lab (mezcla de config, código, Terraform y pipeline)
+- [ ] Una persona prepara 5 fallos distintos en `WebAppApi`, el frontend, `infra/` o el pipeline (mezcla de config, código, Terraform y pipeline)
 - [ ] Los otros tres los resuelven en paralelo aplicando los roles y el método de diagnóstico
 - [ ] Registrar tiempo por fallo y dónde se perdió tiempo
 - [ ] Revisión de 20 min: qué cambiamos para el viernes
@@ -226,7 +236,7 @@ Meta del día: ensayar la competencia como equipo y llegar descansados. Nada nue
 **Cerrar materiales**
 
 - [ ] Chuleta final unificada (esta doc, sección Chuletas) en el teléfono y descargada offline
-- [ ] Repo del lab con el Terraform y la API funcionando, por si sirve de referencia
+- [ ] Este repo con `infra/`, `WebAppApi/` y `frontend/` funcionando, por si sirve de referencia
 
 **Logística**
 
@@ -288,7 +298,8 @@ Los fallos más probables, ordenados por frecuencia en apps de App Service. Usar
 | HTTP 503 / la app no arranca               | Log stream, Diagnose and solve problems                      | Startup command, puerto, runtime stack incorrecto                   | Corregir `site_config` o startup command; `WEBSITES_PORT` (solo contenedores) |
 | Error CORS en el navegador                 | Consola del navegador (F12), configuración CORS              | Origen del frontend no permitido                                    | Agregar el origen en App Service CORS o en el código, no en ambos |
 | Frontend no llega a la API                 | Network tab, variable de URL de la API                       | URL de API vieja o mal escrita en el frontend                       | Corregir la variable y redesplegar                                |
-| Instancia "unhealthy"                      | Health check en el portal, `requests` a la ruta              | Ruta de health check incorrecta o endpoint que falla                | Corregir la ruta o el endpoint `/health`                          |
+| Instancia "unhealthy"                      | Health check en el portal, `requests` a la ruta              | Ruta de health check incorrecta o endpoint que falla                | Corregir la ruta o el endpoint `/healthz`                         |
+| 500 con `no such table` (SQLite)           | Log stream, `exceptions` en App Insights                     | Migraciones sin aplicar, o `ConnectionStrings__Default` a una ruta sin persistencia | Aplicar migraciones al arrancar; apuntar el `.db` a `/home`      |
 | Dependencia fallando (BD, API externa)     | App Insights → `dependencies`, Application Map               | Connection string incorrecta, firewall, host caído                  | Corregir connection string; permitir IP/servicio                  |
 | Respuestas lentas                          | Performance, `percentile(duration, 95)`, trazas en Dynatrace | Consulta lenta, dependencia lenta, plan pequeño                     | Optimizar o escalar el plan                                       |
 | No llega telemetría                        | App Settings, Live Metrics                                   | `APPLICATIONINSIGHTS_CONNECTION_STRING` vacía o errónea             | Configurar la connection string correcta                          |
@@ -308,7 +319,7 @@ az login
 az account set --subscription "<subscription-id>"
 az group create -n rg-hack -l eastus
 
-# Desplegar rápido una API .NET
+# Desplegar rápido una API .NET (desde la carpeta WebAppApi/)
 az webapp up --name <app> --resource-group rg-hack --runtime "DOTNETCORE:10.0" --sku B1
 
 # Diagnóstico
@@ -323,7 +334,7 @@ az webapp cors add -n <app> -g rg-hack --allowed-origins https://<frontend>.azur
 az webapp restart -n <app> -g rg-hack
 ```
 
-### Terraform (lab base, azurerm 4.x)
+### Terraform (infraestructura base, azurerm 4.x)
 
 ```hcl
 terraform {
@@ -376,13 +387,15 @@ resource "azurerm_linux_web_app" "api" {
 
   site_config {
     application_stack { dotnet_version = "10.0" }
-    health_check_path                 = "/health"
+    health_check_path                 = "/healthz"
     health_check_eviction_time_in_min = 2
     cors { allowed_origins = ["https://front-${var.prefix}.azurewebsites.net"] }
   }
 
   app_settings = {
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.ai.connection_string
+    MENSAJE_BIENVENIDA                    = "Hola desde Terraform"
+    ConnectionStrings__Default            = "Data Source=/home/app.db" # SQLite en /home, que persiste
   }
 }
 

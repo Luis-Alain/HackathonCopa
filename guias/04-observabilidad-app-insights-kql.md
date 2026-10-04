@@ -95,6 +95,7 @@ Para cada caso, provócalo tú y encuentra la evidencia **solo con App Insights*
 | Provoca esto                                   | Síntoma que verás | Evidencia que lo prueba |
 | ---------------------------------------------- | ----------------- | ----------------------- |
 | Borra `MENSAJE_BIENVENIDA`                     |                   |                         |
+| Apunta `ConnectionStrings__Default` a una carpeta que no existe (`Data Source=/home/noexiste/app.db`) |                   |                         |
 | Pon `EXTERNAL_API_URL` con un host inexistente |                   |                         |
 | Agrega un `Task.Delay` de 3 s a un endpoint    |                   |                         |
 | Lanza una excepción no controlada              |                   |                         |

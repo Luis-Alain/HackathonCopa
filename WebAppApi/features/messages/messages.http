@@ -1,0 +1,139 @@
+# Messages between contacts. Run the requests top to bottom: the first two create the contacts
+# (Ana and Luis) that the rest of the file uses, and the last ones clean everything up.
+# Docs: docs/messages.md
+
+@baseUrl = http://localhost:5033
+@missingId = 999999
+
+### Setup: create Ana
+# @name ana
+POST {{baseUrl}}/api/contacts
+Content-Type: application/json
+
+{
+  "name": "Ana",
+  "phone": "+50761234567"
+}
+
+### Setup: create Luis
+# @name luis
+POST {{baseUrl}}/api/contacts
+Content-Type: application/json
+
+{
+  "name": "Luis",
+  "phone": "+50760000000"
+}
+
+### Ana sends a message to Luis: 201
+# @name hello
+POST {{baseUrl}}/api/messages
+Content-Type: application/json
+
+{
+  "senderId": {{ana.response.body.$.id}},
+  "recipientId": {{luis.response.body.$.id}},
+  "content": "Hola Luis"
+}
+
+### Luis answers: 201
+# @name reply
+POST {{baseUrl}}/api/messages
+Content-Type: application/json
+
+{
+  "senderId": {{luis.response.body.$.id}},
+  "recipientId": {{ana.response.body.$.id}},
+  "content": "Hola Ana!"
+}
+
+### Conversation Ana <-> Luis: 200, both messages in order
+GET {{baseUrl}}/api/contacts/{{ana.response.body.$.id}}/conversations/{{luis.response.body.$.id}}
+
+### Same conversation from Luis's side: same result
+GET {{baseUrl}}/api/contacts/{{luis.response.body.$.id}}/conversations/{{ana.response.body.$.id}}
+
+### Luis's inbox: 200, only messages he received
+GET {{baseUrl}}/api/contacts/{{luis.response.body.$.id}}/messages/inbox
+
+### Luis's sent messages: 200, only messages he sent
+GET {{baseUrl}}/api/contacts/{{luis.response.body.$.id}}/messages/sent
+
+### All messages: 200
+GET {{baseUrl}}/api/messages
+
+### Get one message: 200
+GET {{baseUrl}}/api/messages/{{hello.response.body.$.id}}
+
+### Edit the text: 200
+PUT {{baseUrl}}/api/messages/{{hello.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "content": "Hola Luis (editado)"
+}
+
+### Luis reads it: 200, readAt is set (calling it again keeps the first time)
+PUT {{baseUrl}}/api/messages/{{hello.response.body.$.id}}/read
+
+### --- Errors ---
+
+### Send to yourself: 400 "A contact can't send a message to itself."
+POST {{baseUrl}}/api/messages
+Content-Type: application/json
+
+{
+  "senderId": {{ana.response.body.$.id}},
+  "recipientId": {{ana.response.body.$.id}},
+  "content": "Hola yo"
+}
+
+### Sender doesn't exist: 404 "Sender contact ... not found."
+POST {{baseUrl}}/api/messages
+Content-Type: application/json
+
+{
+  "senderId": {{missingId}},
+  "recipientId": {{ana.response.body.$.id}},
+  "content": "x"
+}
+
+### Recipient doesn't exist: 404 "Recipient contact ... not found."
+POST {{baseUrl}}/api/messages
+Content-Type: application/json
+
+{
+  "senderId": {{ana.response.body.$.id}},
+  "recipientId": {{missingId}},
+  "content": "x"
+}
+
+### Invalid body: 400 with errors for SenderId and Content
+POST {{baseUrl}}/api/messages
+Content-Type: application/json
+
+{
+  "senderId": 0,
+  "recipientId": {{luis.response.body.$.id}},
+  "content": ""
+}
+
+### Conversation with a contact that doesn't exist: 404
+GET {{baseUrl}}/api/contacts/{{ana.response.body.$.id}}/conversations/{{missingId}}
+
+### Delete a contact that has messages: 409
+DELETE {{baseUrl}}/api/contacts/{{ana.response.body.$.id}}
+
+### --- Cleanup ---
+
+### Delete the first message: 204
+DELETE {{baseUrl}}/api/messages/{{hello.response.body.$.id}}
+
+### Delete the reply: 204
+DELETE {{baseUrl}}/api/messages/{{reply.response.body.$.id}}
+
+### Delete Ana: 204
+DELETE {{baseUrl}}/api/contacts/{{ana.response.body.$.id}}
+
+### Delete Luis: 204
+DELETE {{baseUrl}}/api/contacts/{{luis.response.body.$.id}}

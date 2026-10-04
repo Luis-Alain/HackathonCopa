@@ -6,7 +6,7 @@
 
 **Material:** Workshop 5 (verlo dos veces, es el más cercano a los retos) y el Runbook del [README](../README.md#runbook-de-troubleshooting).
 
-**Requisito:** lab completo funcionando (API + frontend + App Insights) y las guías 01, 02 y 04.
+**Requisito:** todo funcionando en Azure (`WebAppApi` + `frontend/` + App Insights) y las guías 01, 02 y 04.
 
 ---
 

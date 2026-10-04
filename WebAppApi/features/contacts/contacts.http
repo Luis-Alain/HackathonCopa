@@ -1,0 +1,59 @@
+# Contacts. Run the requests top to bottom: later ones use the id created by "createContact".
+# Docs: docs/contacts.md
+
+@baseUrl = http://localhost:5033
+@missingId = 999999
+
+### List contacts: 200
+GET {{baseUrl}}/api/contacts
+
+### Create a contact: 201 with a Location header
+# @name createContact
+POST {{baseUrl}}/api/contacts
+Content-Type: application/json
+
+{
+  "name": "Ana",
+  "phone": "+50761234567"
+}
+
+### Get the created contact: 200
+GET {{baseUrl}}/api/contacts/{{createContact.response.body.$.id}}
+
+### Update the created contact: 200
+PUT {{baseUrl}}/api/contacts/{{createContact.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "name": "Ana María",
+  "phone": "+50769876543"
+}
+
+### Delete the created contact: 204 (409 if it has messages)
+DELETE {{baseUrl}}/api/contacts/{{createContact.response.body.$.id}}
+
+### --- Errors ---
+
+### Invalid body: 400 with errors for Name and Phone
+POST {{baseUrl}}/api/contacts
+Content-Type: application/json
+
+{
+  "name": "",
+  "phone": "abc"
+}
+
+### Contact that doesn't exist: 404
+GET {{baseUrl}}/api/contacts/{{missingId}}
+
+### Update a contact that doesn't exist: 404
+PUT {{baseUrl}}/api/contacts/{{missingId}}
+Content-Type: application/json
+
+{
+  "name": "Nadie",
+  "phone": "+50760000001"
+}
+
+### Non-numeric id: 404 (the route only accepts numbers)
+GET {{baseUrl}}/api/contacts/abc

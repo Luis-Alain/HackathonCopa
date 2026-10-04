@@ -1,6 +1,6 @@
 # 02 · Terraform (infraestructura como código)
 
-**Objetivo:** levantar toda la infraestructura del lab con un solo `terraform apply` y saber leer y corregir errores de Terraform.
+**Objetivo:** levantar toda la infraestructura (API, frontend y monitoreo) con un solo `terraform apply` y saber leer y corregir errores de Terraform.
 
 **Rol experto:** IaC / Pipelines · **Tiempo estimado:** 3–4 h
 
@@ -22,8 +22,8 @@
 
 ## Ejercicio 1 · Primer recurso
 
-1. Crea la carpeta `lab/infra`.
-2. Declara el provider `azurerm` versión 4.x con el bloque `features {}`.
+1. Trabaja en la carpeta `infra/` de la raíz del repo. Ya tiene un `main.tf` con un resource group, pero usa el provider `azurerm` **3.x** (`~> 3.0.2`).
+2. Actualízalo a `azurerm` versión 4.x con el bloque `features {}`. Después de cambiar la versión, corre `terraform init -upgrade`.
 3. Crea **solo** un resource group.
 4. Corre todo el flujo hasta `apply`. Revisa el recurso en el portal.
 5. Corre `terraform state list` y `terraform show`.
@@ -35,19 +35,19 @@ A diferencia de la versión 3, en la 4.x el provider exige `subscription_id` (en
 
 </details>
 
-## Ejercicio 2 · El lab completo
+## Ejercicio 2 · La infraestructura completa
 
 Agrega, uno por uno, y haz `plan` + `apply` después de cada recurso:
 
 1. `azurerm_log_analytics_workspace`
 2. `azurerm_application_insights` conectado al workspace
 3. `azurerm_service_plan` (Linux, B1)
-4. `azurerm_linux_web_app` para tu API, con:
+4. `azurerm_linux_web_app` para `WebAppApi`, con:
    - stack .NET 10
-   - health check en `/health`
-   - App Settings: `MENSAJE_BIENVENIDA` y `APPLICATIONINSIGHTS_CONNECTION_STRING` (tomada del recurso de App Insights, no copiada a mano)
+   - health check en `/healthz`
+   - App Settings: `MENSAJE_BIENVENIDA`, `ConnectionStrings__Default` (la ruta del `.db` en `/home`, ver guía 01, Ejercicio 2b) y `APPLICATIONINSIGHTS_CONNECTION_STRING` (tomada del recurso de App Insights, no copiada a mano)
    - CORS con el origen de tu frontend
-5. El frontend (`azurerm_static_web_app` u otra Web App)
+5. El frontend de la carpeta `frontend/` (`azurerm_static_web_app` u otra Web App)
 6. Outputs: URL de la API, URL del frontend, nombre del resource group
 
 Usa las pistas solo si te atascas más de 15 minutos con un recurso.
@@ -73,7 +73,7 @@ Si defines `health_check_path`, el provider te pedirá también `health_check_ev
 
 </details>
 
-**Verifica:** despliega tu API sobre la Web App creada por Terraform y abre `/api/info`.
+**Verifica:** despliega `WebAppApi` sobre la Web App creada por Terraform, abre `/api/info` y corre la colección de Postman contra esa URL (`npx newman run docs/postman/WebAppApi.postman_collection.json --env-var baseUrl=https://<tu-app>.azurewebsites.net`).
 
 ## Ejercicio 3 · Destruir y recrear
 
@@ -107,7 +107,7 @@ Cambia algo que obligue a **reemplazar** un recurso (por ejemplo el nombre o la 
 
 ## Listo cuando
 
-- [ ] El lab completo se crea con un solo `terraform apply`
+- [ ] La infraestructura completa se crea con un solo `terraform apply`
 - [ ] Puedes leer un plan y decir en voz alta qué va a pasar
 - [ ] Reconoces los 6 errores del ejercicio 5 por su mensaje
 

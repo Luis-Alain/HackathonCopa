@@ -41,8 +41,8 @@ Algunas cuentas universitarias no permiten crear "app registrations" en el direc
 ## Ejercicio 3 · Pipeline de build
 
 1. Crea `azure-pipelines.yml` en la raíz del repo.
-2. Debe dispararse solo con cambios en `lab/api/`.
-3. Pasos: instalar el SDK .NET 10, hacer `publish` del proyecto en Release y publicar el resultado como artifact.
+2. Debe dispararse solo con cambios en `WebAppApi/`.
+3. Pasos: instalar el SDK .NET 10, hacer `publish` de `WebAppApi/WebAppApi.csproj` en Release y publicar el resultado como artifact.
 4. Haz push y mira el job correr.
 
 <details>

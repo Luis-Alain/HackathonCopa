@@ -33,6 +33,16 @@ dotnet run --launch-profile http   # http://localhost:5033
 | `http` | `http://localhost:5033` |
 | `https` | `https://localhost:7168` and `http://localhost:5033` |
 
+### `.http` files
+
+Run them from the editor (VS Code with the REST Client extension, or Visual Studio 2022 17.12+), top to bottom: later requests use ids created by earlier ones.
+
+| File | Content |
+|---|---|
+| `WebAppApi/WebAppApi.http` | health check and OpenAPI |
+| `WebAppApi/features/contacts/contacts.http` | contacts CRUD and its errors |
+| `WebAppApi/features/messages/messages.http` | a full conversation between two contacts, its errors, and cleanup |
+
 In Development, the OpenAPI document is available at `GET /openapi/v1.json`. Postman can import it with **Import → Link**.
 
 ## Testing with Postman

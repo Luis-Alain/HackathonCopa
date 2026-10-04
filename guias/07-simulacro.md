@@ -12,7 +12,7 @@
 
 Una persona prepara el simulacro sola, sin que los demás vean.
 
-1. Levanta el lab limpio con Terraform y verifica que todo funciona.
+1. Levanta el entorno limpio con Terraform (`infra/`), despliega `WebAppApi` y `frontend/`, y verifica que todo funciona (la colección de Postman debe pasar completa).
 2. Prepara **5 fallos distintos** que mezclen tipos: al menos uno de configuración, uno de código, uno de Terraform y uno de pipeline o de plataforma.
 3. Escribe cada fallo como un "reto" con un síntoma vago, como los daría un organizador. Por ejemplo: *"Los usuarios reportan que la lista de vuelos no carga"*.
 4. Asigna puntos según la dificultad (por ejemplo 100, 200 o 300).
