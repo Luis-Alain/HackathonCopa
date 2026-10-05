@@ -13,7 +13,6 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: contacts-api-96968
-  (terraform output / portal)
   PROJECT_PATH: WebAppApi/WebAppApi.csproj
   DOTNET_VERSION: '10.x'
 
