@@ -1,7 +1,7 @@
 # Contacts. Run the requests top to bottom: later ones use the id created by "createContact".
 # Docs: docs/contacts.md
 
-@baseUrl = http://localhost:5033
+@baseUrl = contacts-api-htccbbenfpfeagb8.westus-01.azurewebsites.net
 @missingId = 999999
 
 ### List contacts: 200
