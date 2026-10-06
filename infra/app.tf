@@ -29,11 +29,15 @@ resource "azurerm_linux_web_app" "api" {
   }
 
   site_config {
-    health_check_path                 = "/health"
+    health_check_path                 = "/healthz"
     health_check_eviction_time_in_min = 3
     always_on                         = false # obligatorio en false si usas F1
     application_stack {
       dotnet_version = "10.0"
+    }
+
+    cors {
+      allowed_origins = ["https://purple-sky-0dc1e101e.3.azurestaticapps.net"]
     }
   }
 
