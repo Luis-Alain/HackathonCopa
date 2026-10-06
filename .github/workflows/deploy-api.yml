@@ -1,6 +1,3 @@
-# CD de WebAppApi → Azure App Service (Linux)
-# Auth con publish profile: no requiere app registration en Entra ID.
-
 name: Deploy WebAppApi
 
 on:
