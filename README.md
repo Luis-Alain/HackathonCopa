@@ -13,22 +13,6 @@ REST API for managing contacts and the messages they send to each other. Built w
 | [docs/postman/WebAppApi.postman_collection.json](docs/postman/WebAppApi.postman_collection.json) | Postman collection with automated tests for every endpoint |
 | [guias/README.md](guias/README.md) | Hackathon study plan, roles, runbook and cheat sheets |
 
-## Status
-
-| Feature | Status |
-|---|---|
-| Contacts CRUD | ✅ Implemented and tested |
-| Messages between contacts | ✅ Implemented and tested |
-| Health check (`/healthz`) | ✅ Implemented (placeholder check; a database check is pending, see [docs/health-checks.md](docs/health-checks.md)) |
-| Migrations applied on startup | ✅ `Database.MigrateAsync()` in `Program.cs` |
-| OpenAPI document | ✅ Development only |
-| `.http` files and Postman collection | ✅ |
-| Terraform for Azure (`infra/`) | ✅ Written: resource group, App Service plan, Web App, Log Analytics, Application Insights |
-| Deploy with GitHub Actions | ✅ Written: [`.github/workflows/deploy-api.yml`](.github/workflows/deploy-api.yml) |
-| `GET /api/info` (reads `MENSAJE_BIENVENIDA`) | ⬜ Pending ([guide 01](guias/01-azure-app-service.md)) |
-| Application Insights SDK in the API | ⬜ Pending ([guide 04](guias/04-observabilidad-app-insights-kql.md)); the resource and its connection string already exist in `infra/` |
-| Frontend (`frontend/`) | ⬜ Pending ([guide 01](guias/01-azure-app-service.md), exercise 4) |
-| Azure Pipelines (Azure DevOps) | ⬜ Pending ([guide 03](guias/03-azure-devops-pipelines.md)) |
 
 ## Running locally
 
@@ -176,7 +160,3 @@ Invalid request bodies are rejected with `400 Bad Request` before reaching the s
 }
 ```
 
-## Known issues
-
-- SQLite returns dates without the `Z` suffix after reading them back (`2026-10-04T06:18:54.614736` instead of `...Z`). The value is UTC. Fix: a value converter in `AppDbContext` that sets `DateTimeKind.Utc`.
-- In `deploy-api.yml` the `pull_request:` block is indented under `push:`, so it is not a separate trigger. If you move it to the same level as `push:`, also guard the `deploy` job with `if: github.event_name != 'pull_request'`, or every pull request will deploy to production.
