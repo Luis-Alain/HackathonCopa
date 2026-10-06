@@ -4,7 +4,7 @@
 
 **Todos los roles** · **Tiempo estimado:** 3 h
 
-**Material:** Workshop 5 (verlo dos veces, es el más cercano a los retos) y el Runbook del [README](../README.md#runbook-de-troubleshooting).
+**Material:** Workshop 5 (verlo dos veces, es el más cercano a los retos) y el Runbook del [README del plan](README.md#runbook-de-troubleshooting).
 
 **Requisito:** todo funcionando en Azure (`WebAppApi` + `frontend/` + App Insights) y las guías 01, 02 y 04.
 

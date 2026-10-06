@@ -64,7 +64,7 @@ Azure for Students tiene **restricciones**: no todas las regiones están permiti
 
 </details>
 
-> Si `DOTNETCORE:10.0` no aparece en tu región, el equipo debe acordar trabajar con .NET 8 y tener ese SDK instalado.
+> `infra/` está configurado con .NET 10 en la región `westus`. Si `DOTNETCORE:10.0` no aparece en tu región, el equipo debe acordar bajar `WebAppApi` a .NET 8: cambiar `TargetFramework` en `WebAppApi.csproj`, los paquetes de EF Core a 8.x y `dotnet_version` en `infra/app.tf`, y tener ese SDK instalado.
 
 ## 5. Terraform funcionando
 
@@ -90,7 +90,7 @@ Las organizaciones nuevas de Azure DevOps **no tienen agentes hospedados gratis*
 
 - [ ] Grupo de chat creado
 - [ ] Los 4 miembros con acceso de escritura a este repo
-- [ ] Roles asignados en el README
+- [ ] Roles asignados en el [plan](README.md#roles-del-equipo)
 
 ---
 

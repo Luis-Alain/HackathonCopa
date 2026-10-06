@@ -55,7 +55,7 @@ Para cada vista, anota la ruta exacta en el menú para llegar rápido el día de
 
 ## Ejercicio 4 · DQL
 
-Escribe estas consultas en un Notebook. Los nombres de campos cambian según el entorno, así que **descubre los nombres reales** antes de filtrar. Guarda las que funcionen en `chuletas/dql.md`.
+Escribe estas consultas en un Notebook. Los nombres de campos cambian según el entorno, así que **descubre los nombres reales** antes de filtrar. Guarda las que funcionen en `guias/chuletas/dql.md`.
 
 1. Los últimos 50 logs de nivel error.
 2. Cantidad de logs por nivel.

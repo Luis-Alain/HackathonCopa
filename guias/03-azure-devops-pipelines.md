@@ -17,6 +17,13 @@
 - [ ] ¿Qué es una **service connection** y qué permisos necesita?
 - [ ] ¿Qué es un **artifact** y por qué se separa build de deploy?
 - [ ] Azure DevOps puede usar este repo de GitHub como origen. ¿Qué autorización pide?
+- [ ] ¿Qué diferencia hay entre autenticar con un **publish profile** (como hace el workflow actual) y con una **service connection**? ¿Cuál es más seguro y por qué?
+
+## Punto de partida: tu workflow de GitHub Actions
+
+El repo ya despliega la API con GitHub Actions: [`.github/workflows/deploy-api.yml`](../.github/workflows/deploy-api.yml). Léelo antes de empezar y descríbelo en tus notas: qué lo dispara, qué hace cada job, cómo se autentica contra Azure y qué comprueba al final.
+
+El hackathon usa Azure DevOps, así que los ejercicios 3 y 4 consisten en **llevar ese mismo flujo a Azure Pipelines**.
 
 ## Ejercicio 1 · Git en equipo
 
@@ -40,6 +47,8 @@ Algunas cuentas universitarias no permiten crear "app registrations" en el direc
 
 ## Ejercicio 3 · Pipeline de build
 
+Traduce el job `build` de `deploy-api.yml`.
+
 1. Crea `azure-pipelines.yml` en la raíz del repo.
 2. Debe dispararse solo con cambios en `WebAppApi/`.
 3. Pasos: instalar el SDK .NET 10, hacer `publish` de `WebAppApi/WebAppApi.csproj` en Release y publicar el resultado como artifact.
@@ -52,11 +61,30 @@ Algunas cuentas universitarias no permiten crear "app registrations" en el direc
 
 </details>
 
+<details>
+<summary>Pista: equivalencias GitHub Actions → Azure Pipelines</summary>
+
+| GitHub Actions | Azure Pipelines |
+|---|---|
+| `on.push.branches` / `paths` | `trigger.branches` / `trigger.paths.include` |
+| `runs-on: ubuntu-latest` | `pool.vmImage: ubuntu-latest` (o tu agente autohospedado) |
+| `jobs.<id>` y `needs` | `stages` → `jobs` y `dependsOn` |
+| `actions/setup-dotnet` | `UseDotNet@2` |
+| `dotnet publish` | `DotNetCoreCLI@2` con `command: publish` |
+| `upload-artifact` / `download-artifact` | pasos `publish:` / `download:` |
+| `azure/webapps-deploy` con publish profile | `AzureWebApp@1` con una service connection |
+| `secrets.*` | variables secretas o variable groups |
+| `environment` | Environments de Azure DevOps |
+| paso con `curl` (smoke test) | paso `script:` |
+
+</details>
+
 ## Ejercicio 4 · Pipeline de deploy
 
 1. Agrega un segundo stage que dependa del build.
 2. Descarga el artifact y despliégalo a tu Web App con `AzureWebApp@1` (tipo Linux).
 3. Cambia el texto de algún endpoint, haz push y verifica el cambio en Azure **sin tocar el portal**.
+4. Agrega al final un paso que llame a `/healthz` y haga fallar el pipeline si no responde `200`, como el smoke test del workflow de GitHub.
 
 ## Ejercicio 5 · Romper el pipeline
 
@@ -67,6 +95,7 @@ Un compañero rompe el pipeline sin decirte cómo; tú lo diagnosticas leyendo *
 - [ ] Nombre de la Web App equivocado
 - [ ] Service connection con un nombre que no existe
 - [ ] Error de compilación en el código
+- [ ] En el workflow de GitHub: el secret `AZURE_WEBAPP_PUBLISH_PROFILE` ausente, o Basic Authentication desactivada en la Web App
 
 Para cada uno, anota en qué paso falló y la línea del log que lo delató.
 

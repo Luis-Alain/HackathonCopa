@@ -6,7 +6,7 @@
 
 **Material:** Workshop 4 (Observabilidad, Application Insights, Logs y KQL), Workshop 5 (Troubleshooting en Azure), cápsulas de KQL y diagnóstico.
 
-**Requisito:** API desplegada con App Insights conectado ([02-terraform.md](02-terraform.md)).
+**Requisito:** API desplegada con App Insights conectado ([02-terraform.md](02-terraform.md)). `infra/` ya crea el recurso y pone su connection string en los App Settings; el SDK dentro del código lo agregas en el Ejercicio 1.
 
 ---
 
@@ -54,7 +54,7 @@ Con tráfico corriendo, abre cada vista y anota qué pregunta responde:
 
 ## Ejercicio 3 · KQL desde cero
 
-Escribe cada consulta **tú mismo**. Comprueba el resultado contra lo que ves en el portal. Guarda las que funcionen en un archivo `chuletas/kql.md` del repo.
+Escribe cada consulta **tú mismo**. Comprueba el resultado contra lo que ves en el portal. Guarda las que funcionen en un archivo `guias/chuletas/kql.md` del repo.
 
 1. Las últimas 20 peticiones con nombre, código de respuesta y duración.
 2. Cantidad de peticiones fallidas por endpoint y código en la última hora.

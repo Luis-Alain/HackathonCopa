@@ -14,10 +14,11 @@ Todas las guías usan estas carpetas:
 |---|---|
 | `WebAppApi/` | La API .NET 10 que vas a desplegar: contactos, mensajes entre contactos y health check en `/healthz`. Usa EF Core con SQLite |
 | `docs/` | Documentación de la API y la colección de Postman (`docs/postman/`) |
-| `infra/` | Terraform (guía 02) |
+| `infra/` | Terraform de la API, ya escrito (guía 02) |
+| `.github/workflows/` | Despliegue con GitHub Actions (guía 03) |
 | `frontend/` | El frontend HTML + JS. **Todavía no existe:** lo creas en el Ejercicio 4 |
 
-Antes de empezar, lee `docs/README.md`: explica cómo correr la API y qué hace cada endpoint.
+Antes de empezar, lee el [README del proyecto](../README.md): explica cómo correr la API, qué hace cada endpoint y qué está hecho y qué falta.
 
 ---
 
@@ -41,9 +42,8 @@ La API ya existe en `WebAppApi/`. Primero hazla correr en tu máquina, y luego a
 
 **Parte A · Correrla**
 
-1. Desde `WebAppApi/`, crea la base de datos con `dotnet ef database update`.
-2. Arranca la API con `dotnet run --launch-profile http` (queda en `http://localhost:5033`).
-3. Prueba los endpoints con los archivos `.http`:
+1. Desde `WebAppApi/`, arranca la API con `dotnet run --launch-profile http` (queda en `http://localhost:5033`). Al arrancar crea `app.db` y aplica las migraciones sola (`MigrateAsync` en `Program.cs`); `dotnet ef` solo hace falta para crear migraciones nuevas.
+2. Prueba los endpoints con los archivos `.http`:
 
    | Archivo | Qué prueba |
    |---|---|
@@ -120,20 +120,19 @@ Para practicar, usa **SQLite dentro del mismo App Service** (ver Ejercicio 2b). 
 
 Despliega `WebAppApi` (contactos y mensajes) y haz que la base de datos funcione en Azure.
 
-1. Despliega la API tal como está y llama a `GET /api/contacts`. Anota el error exacto que ves en **Log stream**.
-2. Explica por qué falla. Pista: ¿quién crea las tablas en tu máquina? ¿Quién las crearía en Azure?
+1. Abre `WebAppApi/Program.cs` y localiza dónde se crea y migra la base al arrancar. ¿Qué necesita esa llamada para funcionar en Azure?
+2. Despliega la API tal como está (con `Data Source=app.db`) y llama a `GET /api/contacts`. Anota qué ocurre y qué dice **Log stream**.
 3. Decide **dónde** vive el archivo `.db`. En App Service Linux, solo `/home` persiste entre reinicios y despliegues. `/home/site/wwwroot` también persiste, pero cada despliegue lo reemplaza.
 4. Configura la ruta con un App Setting que reemplace a `ConnectionStrings:Default` (recuerda la regla del `__` de la sección de conceptos).
-5. Haz que las migraciones se apliquen solas al arrancar la app.
-6. Repite el paso 1. Luego corre la colección de Postman contra Azure:
+5. Repite el paso 2. Luego corre la colección de Postman contra Azure:
    ```bash
    npx newman run docs/postman/WebAppApi.postman_collection.json --env-var baseUrl=https://<tu-app>.azurewebsites.net
    ```
 
 <details>
-<summary>Pista: el error del paso 1</summary>
+<summary>Pista: qué puede pasar en el paso 2</summary>
 
-Busca `SQLite Error 1: 'no such table: Contacts'`. Localmente corriste `dotnet ef database update`; en Azure nadie lo hizo.
+Las migraciones ya se aplican solas, así que no deberías ver `no such table`. Los síntomas posibles son un error al abrir o escribir el archivo (por ejemplo `unable to open database file` o base de datos de solo lectura) o datos que desaparecen en el siguiente despliegue. Anota cuál ves y explica por qué.
 
 </details>
 
@@ -145,9 +144,9 @@ Busca `SQLite Error 1: 'no such table: Contacts'`. Localmente corriste `dotnet e
 </details>
 
 <details>
-<summary>Pista: migraciones al arrancar</summary>
+<summary>Nota: migraciones al arrancar</summary>
 
-Después de `builder.Build()`, crea un scope, pide el `AppDbContext` y llama a `Database.Migrate()`. Busca "apply migrations at runtime EF Core".
+`Program.cs` crea un scope después de `builder.Build()`, pide el `AppDbContext` y llama a `Database.MigrateAsync()`.
 
 Para una sola instancia está bien. Con varias instancias, todas intentarían migrar a la vez; en ese caso se usan *migration bundles* o un paso del pipeline.
 

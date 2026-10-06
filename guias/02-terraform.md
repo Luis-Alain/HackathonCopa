@@ -19,43 +19,41 @@
 - [ ] Símbolos de un plan: `+`, `~`, `-`, `-/+`. ¿Cuál es el peligroso?
 - [ ] ¿Qué es el **drift**?
 - [ ] ¿Por qué el nombre de una Web App debe ser único en todo Azure y cómo lo resuelves en Terraform?
+- [ ] El state de `infra/` es local. ¿Qué pasa si dos compañeros hacen `apply` cada uno con su state? ¿Qué es un backend remoto?
 
-## Ejercicio 1 · Primer recurso
+## Ejercicio 1 · Lee y corre `infra/`
 
-1. Trabaja en la carpeta `infra/` de la raíz del repo. Ya tiene un `main.tf` con un resource group, pero usa el provider `azurerm` **3.x** (`~> 3.0.2`).
-2. Actualízalo a `azurerm` versión 4.x con el bloque `features {}`. Después de cambiar la versión, corre `terraform init -upgrade`.
-3. Crea **solo** un resource group.
-4. Corre todo el flujo hasta `apply`. Revisa el recurso en el portal.
-5. Corre `terraform state list` y `terraform show`.
+La carpeta `infra/` ya tiene el Terraform de la API: `main.tf` (provider y resource group) y `app.tf` (plan, Web App, Log Analytics, diagnostic settings y App Insights). Usa `azurerm` `=5.0.0` y la región `westus`.
+
+1. Lee `main.tf` y `app.tf` y explica en tus notas qué hace cada bloque `resource`, `data` y `output`, y qué atributo conecta cada recurso con el siguiente (por ejemplo, de dónde sale `APPLICATIONINSIGHTS_CONNECTION_STRING`).
+2. Corre `terraform init`, `terraform fmt`, `terraform validate` y `terraform plan`. Lee el plan completo y cuenta cuántos recursos va a crear.
+3. Haz `apply`, revisa los recursos en el portal y corre `terraform state list` y `terraform show`.
+4. Responde: el resource group se declara como `resource` en `main.tf` y se vuelve a leer como `data` en `app.tf`. ¿Hace falta el `data`? ¿Qué podrías usar en su lugar?
+5. Responde: ¿dónde está el state ahora? ¿Está en el repo? ¿Qué le pasaría a un compañero que corra `apply` con su propio state local?
 
 <details>
-<summary>Pista: azurerm 4.x pide la suscripción</summary>
+<summary>Pista: la suscripción</summary>
 
-A diferencia de la versión 3, en la 4.x el provider exige `subscription_id` (en el bloque del provider o con la variable de entorno `ARM_SUBSCRIPTION_ID`). Pásala como variable, no la escribas fija en el código.
+`infra/` no declara `subscription_id`, así que el provider usa la suscripción activa de `az login`. Antes de hacer `apply`, confirma cuál es con `az account show`.
 
 </details>
 
-## Ejercicio 2 · La infraestructura completa
+## Ejercicio 2 · Completa lo que falta
 
-Agrega, uno por uno, y haz `plan` + `apply` después de cada recurso:
+`infra/` cubre la API y el monitoreo. Agrega lo que todavía no tiene, haciendo `plan` + `apply` después de cada cambio:
 
-1. `azurerm_log_analytics_workspace`
-2. `azurerm_application_insights` conectado al workspace
-3. `azurerm_service_plan` (Linux, B1)
-4. `azurerm_linux_web_app` para `WebAppApi`, con:
-   - stack .NET 10
-   - health check en `/healthz`
-   - App Settings: `MENSAJE_BIENVENIDA`, `ConnectionStrings__Default` (la ruta del `.db` en `/home`, ver guía 01, Ejercicio 2b) y `APPLICATIONINSIGHTS_CONNECTION_STRING` (tomada del recurso de App Insights, no copiada a mano)
-   - CORS con el origen de tu frontend
-5. El frontend de la carpeta `frontend/` (`azurerm_static_web_app` u otra Web App)
-6. Outputs: URL de la API, URL del frontend, nombre del resource group
+1. El App Setting `MENSAJE_BIENVENIDA` (lo lee `/api/info`, guía 01).
+2. El frontend como `azurerm_static_web_app`. Hoy el origen de CORS está escrito a mano en `app.tf`: haz que salga del recurso.
+3. Outputs: URL del frontend, nombre del resource group y nombre de la Web App (la guía 03 los necesita).
+4. Declara el provider `random` en `required_providers`, junto a `azurerm`. Hoy solo está `azurerm`.
+5. Decide cómo evitas que el nombre de la Web App cambie en cada `destroy` + `apply` (ver el Ejercicio 3).
 
-Usa las pistas solo si te atascas más de 15 minutos con un recurso.
+Usa las pistas solo si te atascas más de 15 minutos con un cambio.
 
 <details>
 <summary>Pista: nombres únicos</summary>
 
-El provider `random` tiene un recurso `random_string`. Úsalo como sufijo en un `locals`.
+`infra/` usa `random_integer`, y su valor vive en el state: después de un `destroy` se genera otro. Si necesitas un nombre estable, ¿qué alternativa tienes? (por ejemplo, una variable con el sufijo fijo).
 
 </details>
 
@@ -79,7 +77,7 @@ Si defines `health_check_path`, el provider te pedirá también `health_check_ev
 
 1. `terraform destroy`. Cronometra.
 2. `terraform apply`. Cronometra.
-3. Vuelve a desplegar la API. ¿Qué tienes que hacer a mano todavía? Anótalo: es lo que el pipeline debe automatizar ([03-azure-devops-pipelines.md](03-azure-devops-pipelines.md)).
+3. Vuelve a desplegar la API. El workflow de GitHub Actions (`.github/workflows/deploy-api.yml`) apunta a un nombre fijo (`AZURE_WEBAPP_NAME`) y usa un secret con el publish profile. ¿Qué se rompe después de recrear la infraestructura? Anota qué tienes que hacer a mano todavía: es lo que el pipeline de la guía 03 ([03-azure-devops-pipelines.md](03-azure-devops-pipelines.md)) debe automatizar o evitar.
 
 ## Ejercicio 4 · Drift
 
