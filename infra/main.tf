@@ -15,8 +15,3 @@ provider "azurerm" {
     }
   }
 }
-
-resource "azurerm_resource_group" "main" {
-  name     = "rg-hachathon-copa"
-  location = "westus"
-}

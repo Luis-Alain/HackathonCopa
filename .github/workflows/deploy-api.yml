@@ -10,12 +10,12 @@ on:
       - "WebAppApi/**"
       - ".github/workflows/deploy-api.yml"
       - "infra/**"
-    pull_request:
-      branches: [main]
-      paths:
-        - "WebAppApi/**"
-        - ".github/workflows/deploy-api.yml"
-        - "infra/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "WebAppApi/**"
+      - ".github/workflows/deploy-api.yml"
+      - "infra/**"
   workflow_dispatch:
 
 env:
