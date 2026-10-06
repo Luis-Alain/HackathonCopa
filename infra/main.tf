@@ -1,8 +1,3 @@
-import {
-  to = azurerm_resource_group.main
-  id = "/subscriptions/${var.subscription_id}/resourceGroups/rg-hachathon-copa"
-}
-
 terraform {
   required_providers {
     azurerm = {
