@@ -7,14 +7,19 @@ on:
   push:
     branches: [main]
     paths:
-      - 'WebAppApi/**'
-      - '.github/workflows/deploy-api.yml'
+      - "WebAppApi/**"
+      - ".github/workflows/deploy-api.yml"
+    pull_request:
+      branches: [main]
+      paths:
+        - "WebAppApi/**"
+        - ".github/workflows/deploy-api.yml"
   workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: contacts-api-96968
   PROJECT_PATH: WebAppApi/WebAppApi.csproj
-  DOTNET_VERSION: '10.x'
+  DOTNET_VERSION: "10.x"
 
 concurrency:
   group: deploy-api
