@@ -29,16 +29,61 @@ resource "azurerm_linux_web_app" "api" {
   }
 
   site_config {
-    always_on = false # obligatorio en false si usas F1
+    health_check_path                 = "/health"
+    health_check_eviction_time_in_min = 3
+    always_on                         = false # obligatorio en false si usas F1
     application_stack {
-      dotnet_version = "10.0" # la versión que use tu proyecto
+      dotnet_version = "10.0"
     }
   }
 
   app_settings = {
     ASPNETCORE_ENVIRONMENT     = "Production"
     ConnectionStrings__Default = "Data Source=/home/app.db"
+
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
   }
+}
+
+# Log Analytics Workspace
+resource "azurerm_log_analytics_workspace" "workspace" {
+  name                = "monitoring-log-analytics"
+  location            = data.azurerm_resource_group.main.location
+  resource_group_name = data.azurerm_resource_group.main.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+# Sends the Web App logs to Log Analytics (queried with KQL).
+resource "azurerm_monitor_diagnostic_setting" "api_logs" {
+  name                       = "api-logs-to-log-analytics"
+  target_resource_id         = azurerm_linux_web_app.api.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.workspace.id
+
+  enabled_log {
+    category = "AppServiceHTTPLogs"
+  }
+
+  enabled_log {
+    category = "AppServiceConsoleLogs"
+  }
+
+  enabled_log {
+    category = "AppServiceAppLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}
+
+# Sets up Application Insights to monitor web application performance.
+resource "azurerm_application_insights" "app_insights" {
+  name                = "app-insights"
+  location            = data.azurerm_resource_group.main.location
+  resource_group_name = data.azurerm_resource_group.main.name
+  workspace_id        = azurerm_log_analytics_workspace.workspace.id
+  application_type    = "web"
 }
 
 output "api_url" {
